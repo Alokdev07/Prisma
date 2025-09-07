@@ -6,6 +6,7 @@ const router = Router()
 router.post("/create-comment",create_comment)
 router.put("/update-comment/:id",update_comment)
 router.get("/get-comment",fetch_comment)
+
 router.get("/get-current-comment/:id",show_comment)
 router.delete("/delete-comment/:id",delete_comment)
 

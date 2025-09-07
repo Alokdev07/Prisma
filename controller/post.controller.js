@@ -21,6 +21,93 @@ export const fetch_post = async (req, res) => {
   return res.json({ data: posts });
 };
 
+export const pagination_post = async (req, res) => {
+  const page = Number(req.query.page) || 1
+  const limit = Number(req.query.limit) || 1
+
+  if (page < 0 || limit > 100) {
+    page = 1
+    limit = 100
+  }
+
+  const skip = (page - 1)* limit
+
+  const posts = await prisma.post.findMany({
+    skip : skip,
+    take : limit,
+   
+  });
+
+  const total_post = await prisma.post.count()
+  const total_page = Math.ceil(total_post/limit)
+  return res.json({ data: posts,meta : {
+    totalpage : total_page,
+    limit : limit,
+    Currentpage : page
+  } });
+};
+
+export const fetch_post_condition = async (req,res) => {
+  const post = await prisma.post.findMany({
+    // where : {
+    //   comment_count : {
+    //     gt : 1
+    //   }
+    // }
+
+    // where : {
+    //   title : {
+    //     startsWith : "nextjs"
+    //   }
+    // }
+
+    // where : {
+    //   OR : [
+    //     {
+    //       title : {
+    //         startsWith : 'next'
+    //       }
+    //     },
+    //     {
+    //       title : {
+    //         endsWith : "tutorial"
+    //       }
+    //     }
+    //   ]
+    // }
+
+    where : {
+      AND : [
+        {
+          title : {
+            startsWith : 'next'
+          }
+        },
+        {
+          title : {
+            endsWith : "tutorial"
+          }
+        }
+      ]
+    }
+  })
+  return res.json({data : post})
+}
+
+export const search_post = async(req,res) => {
+  const query = req.query.query
+  const post = await prisma.post.findMany({
+    where : {
+      description : {
+        search : query,
+        mode : "insensitive"
+      }
+    }
+  })
+
+  return res.json({data : post})
+}
+
 export const create_post = async (req, res) => {
   const { user_id, title, description } = req.body;
 

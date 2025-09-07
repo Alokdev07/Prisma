@@ -10,6 +10,8 @@ export const fetch_comment = async (req, res) => {
   return res.json({ data: comments });
 };
 
+
+
 export const create_comment = async (req, res) => {
   const { comment, postId,userId } = req.body;
 
